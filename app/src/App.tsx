@@ -1,9 +1,22 @@
-import { useState } from 'react';
-import Solutions from './components/Solutions';
+import { useState, useEffect } from 'react';
+import Solution from './components/Solution';
 
 function App(): JSX.Element {
   const [input, setInput] = useState('');
   const [solutions, setSolutions] = useState<string[]>([]);
+
+  useEffect(() => {
+    const savedSolutions = localStorage.getItem('solutions');
+    if (savedSolutions) {
+      setSolutions(JSON.parse(savedSolutions));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (solutions.length > 0) {
+      localStorage.setItem('solutions', JSON.stringify(solutions));
+    }
+  }, [solutions]);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -15,14 +28,19 @@ function App(): JSX.Element {
 
   const handleClear = () => {
     setSolutions([]);
+    localStorage.clear();
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
   };
 
+  const inputSolution = (item: any) => {
+    setInput(item);
+  };
+
   return (
-    <div className="flex justify-center items-center h-screen w-screen sm:p-3 bg-slate-200">
+    <div className="flex justify-center items-center h-screen w-screen sm:p-3 bg-slate-200 touch-manipulation">
       <div className="max-w-lg w-full h-full shadow-lg flex flex-col-reverse bg-slate-50">
         {/* Input */}
         <form className="flex gap-2 p-3">
@@ -31,7 +49,7 @@ function App(): JSX.Element {
             value={input}
             onChange={handleInputChange}
             className="bg-slate-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          ></input>
+          />
           <button
             onClick={handleSubmit}
             type="submit"
@@ -40,8 +58,26 @@ function App(): JSX.Element {
             Calculate
           </button>
         </form>
+
         {/* Results */}
-        <Solutions solutions={solutions} />
+        <div
+          key={solutions.join()}
+          className="flex flex-col-reverse gap-3 overflow-y-auto px-3 h-full"
+        >
+          {solutions
+            .slice(0)
+            .reverse()
+            .map((item, id) => (
+              <Solution
+                key={id}
+                item={item}
+                id={id}
+                passSolution={() => inputSolution(item)}
+              />
+            ))}
+        </div>
+
+        {/* Clear */}
         <button
           onClick={handleClear}
           type="button"
