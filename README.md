@@ -2,6 +2,9 @@
 
 Smart Calculator is simple web app built with React + TypeScript. Powered with math.js, it can solve complicated problems.
 
+## Live Demo
+- [Smart Calculator](https://smart-calc-sage.vercel.app/)
+
 ## Installation
 
 To run the app locally, you'll need to have Node.js and npm installed. Here are the steps to follow:
